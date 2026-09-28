@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Отработка возражений — НоваяПлитка.рф</title>
+<meta name="description" content="Дополнение к скрипту продаж — стеновые панели, гибкий мрамор и декоративные рейки">
+<style>
+  :root{
+    --bg:#F3F4F7; --surface:#FFFFFF; --surface-2:#FAFBFC; --surface-3:#EEF0F4;
+    --border:#E1E4EA; --border-soft:#ECEEF2;
+    --ink:#12192B; --ink-soft:#5B6472; --ink-faint:#8A93A3; --ink-on-navy:#EAF0F8;
+    --navy:#1D3A5F; --navy-deep:#132844; --navy-soft:#E4EAF1; --navy-ink:#1D3A5F;
+    --gold:#C6862E; --gold-soft:#F3E3C8; --gold-ink:#8A5E1E;
+    --teal:#2E6E86; --teal-soft:#DCEAEF; --teal-ink:#215064;
+    --green:#3D7A56; --green-soft:#E4F0E9; --green-ink:#2C5B40;
+    --red:#B14A3E; --red-soft:#F7E5E2; --red-ink:#8C392F;
+    --plum:#7A4C6E; --plum-soft:#EFE2EC; --plum-ink:#5C3A53;
+    /* fixed brand-panel gradient: intentionally constant across themes (sidebar, hero) */
+    --brand-1:#1D3A5F; --brand-2:#132844;
+    --radius:10px; --radius-sm:7px; --radius-lg:18px;
+    --shadow:0 1px 2px rgba(18,25,43,0.05), 0 4px 16px rgba(18,25,43,0.06);
+    --shadow-lg:0 12px 32px rgba(18,25,43,0.14), 0 2px 8px rgba(18,25,43,0.07);
+    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","Roboto Mono",Consolas,"Cascadia Code",monospace;
+    --sidebar-w:272px;
+    --topbar-h:64px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0E1420; --surface:#161D2C; --surface-2:#1A2231; --surface-3:#212A3C;
+      --border:#2B3549; --border-soft:#232C3E;
+      --ink:#E7EAF2; --ink-soft:#A9B2C4; --ink-faint:#6E7890; --ink-on-navy:#EAF0F8;
+      --navy:#6E97C7; --navy-deep:#0B1524; --navy-soft:#1E2A3D; --navy-ink:#9AB6DC;
+      --gold:#E0A748; --gold-soft:#332918; --gold-ink:#F0C57A;
+      --teal:#69AAC2; --teal-soft:#182B32; --teal-ink:#8FC6DA;
+      --green:#6BB489; --green-soft:#16281E; --green-ink:#8ED0A8;
+      --red:#E08B7C; --red-soft:#33201D; --red-ink:#F0AEA2;
+      --plum:#C79BBB; --plum-soft:#2A2030; --plum-ink:#DBB6CF;
+      --shadow:0 1px 2px rgba(0,0,0,0.35), 0 4px 20px rgba(0,0,0,0.35);
+      --shadow-lg:0 16px 40px rgba(0,0,0,0.45), 0 2px 10px rgba(0,0,0,0.3);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1420; --surface:#161D2C; --surface-2:#1A2231; --surface-3:#212A3C;
+    --border:#2B3549; --border-soft:#232C3E;
+    --ink:#E7EAF2; --ink-soft:#A9B2C4; --ink-faint:#6E7890; --ink-on-navy:#EAF0F8;
+    --navy:#6E97C7; --navy-deep:#0B1524; --navy-soft:#1E2A3D; --navy-ink:#9AB6DC;
+    --gold:#E0A748; --gold-soft:#332918; --gold-ink:#F0C57A;
+    --teal:#69AAC2; --teal-soft:#182B32; --teal-ink:#8FC6DA;
+    --green:#6BB489; --green-soft:#16281E; --green-ink:#8ED0A8;
+    --red:#E08B7C; --red-soft:#33201D; --red-ink:#F0AEA2;
+    --plum:#C79BBB; --plum-soft:#2A2030; --plum-ink:#DBB6CF;
+    --shadow:0 1px 2px rgba(0,0,0,0.35), 0 4px 20px rgba(0,0,0,0.35);
+    --shadow-lg:0 16px 40px rgba(0,0,0,0.45), 0 2px 10px rgba(0,0,0,0.3);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F4F7; --surface:#FFFFFF; --surface-2:#FAFBFC; --surface-3:#EEF0F4;
+    --border:#E1E4EA; --border-soft:#ECEEF2;
+    --ink:#12192B; --ink-soft:#5B6472; --ink-faint:#8A93A3; --ink-on-navy:#EAF0F8;
+    --navy:#1D3A5F; --navy-deep:#132844; --navy-soft:#E4EAF1; --navy-ink:#1D3A5F;
+    --gold:#C6862E; --gold-soft:#F3E3C8; --gold-ink:#8A5E1E;
+    --teal:#2E6E86; --teal-soft:#DCEAEF; --teal-ink:#215064;
+    --green:#3D7A56; --green-soft:#E4F0E9; --green-ink:#2C5B40;
+    --red:#B14A3E; --red-soft:#F7E5E2; --red-ink:#8C392F;
+    --plum:#7A4C6E; --plum-soft:#EFE2EC; --plum-ink:#5C3A53;
+    --shadow:0 1px 2px rgba(18,25,43,0.05), 0 4px 16px rgba(18,25,43,0.06);
+    --shadow-lg:0 12px 32px rgba(18,25,43,0.14), 0 2px 8px rgba(18,25,43,0.07);
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased; font-size:14.5px; line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{text-wrap:balance; margin:0;}
+  p{margin:0;}
+  .tabular{font-variant-numeric:tabular-nums;}
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:4px;}
+  ::selection{background:var(--gold-soft); color:var(--gold-ink);}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+  /* ---------- app shell ---------- */
+  .app{display:grid; grid-template-columns:var(--sidebar-w) 1fr; min-height:100vh;}
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    background:linear-gradient(175deg, var(--brand-2) 0%, var(--brand-1) 130%);
+    color:var(--ink-on-navy);
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    display:flex; flex-direction:column;
+    z-index:60;
+  }
+  .brand{padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.1);}
+  .brand-mark{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .brand-mark svg{width:26px; height:26px; color:var(--gold);}
+  .brand-name{font-size:14.5px; font-weight:800; letter-spacing:-0.01em;}
+  .brand-sub{font-size:11px; color:rgba(234,240,248,0.6); margin-top:1px;}
+  .brand-title{font-size:12.5px; font-weight:700; color:rgba(234,240,248,0.92); line-height:1.4;}
+  .brand-date{font-size:11px; color:rgba(234,240,248,0.55); margin-top:6px; display:flex; align-items:center; gap:5px;}
+
+  .nav{flex:1; padding:10px 12px 16px; overflow-y:auto;}
+  .nav-group{margin-bottom:2px;}
+  .nav-item{
+    width:100%; display:flex; align-items:center; gap:10px;
+    background:none; border:none; color:rgba(234,240,248,0.82);
+    font-family:var(--font-ui); font-size:13px; font-weight:600; text-align:left;
+    padding:9px 10px; border-radius:8px; cursor:pointer;
+    transition:background .12s ease, color .12s ease;
+  }
+  .nav-item .num{
+    flex:none; width:20px; height:20px; border-radius:6px;
+    background:rgba(255,255,255,0.08); color:rgba(234,240,248,0.7);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:10.5px; font-weight:700;
+  }
+  .nav-item .label{flex:1; min-width:0;}
+  .nav-item .label small{display:block; font-size:10px; font-weight:600; color:rgba(234,240,248,0.45); text-transform:uppercase; letter-spacing:.04em; margin-top:1px;}
+  .nav-item:hover{background:rgba(255,255,255,0.07); color:#fff;}
+  .nav-item.is-active{background:var(--gold); color:#2B1D06;}
+  .nav-item.is-active .num{background:rgba(43,29,6,0.18); color:#2B1D06;}
+  .nav-item.is-active .label small{color:rgba(43,29,6,0.62);}
+  .nav-sub{padding-left:34px; margin:1px 0 6px;}
+  .nav-subitem{
+    width:100%; display:block; background:none; border:none;
+    color:rgba(234,240,248,0.6); font-family:var(--font-ui); font-size:12px; font-weight:600;
+    text-align:left; padding:6px 8px; border-radius:6px; cursor:pointer;
+  }
+  .nav-subitem:hover{background:rgba(255,255,255,0.06); color:#fff;}
+  .nav-subitem.is-active{color:var(--gold); background:rgba(198,134,46,0.14);}
+
+  .sidebar-foot{padding:14px 18px 18px; border-top:1px solid rgba(255,255,255,0.1);}
+  .progress-mini{margin-bottom:0;}
+  .progress-mini .pm-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:rgba(234,240,248,0.5); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;}
+  .progress-mini .pm-track{height:6px; border-radius:99px; background:rgba(255,255,255,0.12); overflow:hidden;}
+  .progress-mini .pm-fill{height:100%; background:var(--gold); border-radius:99px; transition:width .25s ease;}
+
+  /* ---------- mobile topbar ---------- */
+  .mobile-bar{display:none;}
+
+  /* ---------- content ---------- */
+  .content{min-width:0;}
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    padding:14px 32px; display:flex; align-items:center; gap:16px; min-height:var(--topbar-h);
+  }
+  .topbar-title{flex:none;}
+  .topbar-title h1{font-size:16px; font-weight:800;}
+  .topbar-title p{font-size:12px; color:var(--ink-faint); margin-top:1px;}
+  .search-wrap{position:relative; margin-left:auto; width:min(340px, 42vw);}
+  .search-wrap svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--ink-faint); pointer-events:none;}
+  #search{
+    width:100%; border:1px solid var(--border); background:var(--surface-2); color:var(--ink);
+    border-radius:999px; padding:9px 14px 9px 32px; font-size:13px; font-family:var(--font-ui);
+    outline:none;
+  }
+  #search:focus{border-color:var(--gold); background:var(--surface);}
+  .search-results{
+    position:absolute; top:calc(100% + 8px); right:0; width:min(420px, 88vw);
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow-lg); max-height:60vh; overflow-y:auto; z-index:80; display:none;
+  }
+  .search-results.is-open{display:block;}
+  .search-results .sr-empty{padding:16px; font-size:13px; color:var(--ink-faint); text-align:center;}
+  .sr-item{display:block; width:100%; text-align:left; background:none; border:none; border-bottom:1px solid var(--border-soft); padding:11px 14px; cursor:pointer; font-family:var(--font-ui);}
+  .sr-item:last-child{border-bottom:none;}
+  .sr-item:hover{background:var(--surface-2);}
+  .sr-item .sr-sec{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--gold-ink); background:var(--gold-soft); display:inline-block; padding:2px 7px; border-radius:5px; margin-bottom:5px;}
+  .sr-item .sr-snip{font-size:13px; color:var(--ink); line-height:1.45;}
+  .sr-item mark{background:var(--gold-soft); color:var(--gold-ink); border-radius:3px; padding:0 2px;}
+
+  main{padding:28px 32px 80px; max-width:920px;}
+  .view{display:none;}
+  .view.is-active{display:block; animation:fadein .2s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .view-head{margin-bottom:28px;}
+  .eyebrow{
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:800;
+    color:var(--gold-ink); background:var(--gold-soft); display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:999px; margin-bottom:12px;
+  }
+  .eyebrow.muted{color:var(--ink-soft); background:var(--surface-3);}
+  .view-head h2{font-size:26px; font-weight:800; letter-spacing:-0.015em; margin-bottom:8px;}
+  .view-head .desc{font-size:14.5px; color:var(--ink-soft); max-width:64ch;}
+
+  /* ---------- home ---------- */
+  .home-hero{
+    background:linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 130%);
+    border-radius:var(--radius-lg); padding:36px 34px; color:var(--ink-on-navy);
+    margin-bottom:28px; position:relative; overflow:hidden;
+  }
+  .home-hero::after{
+    content:""; position:absolute; right:-70px; top:-70px; width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle, rgba(198,134,46,0.32) 0%, transparent 70%);
+  }
+  .home-hero h1{font-size:30px; font-weight:800; letter-spacing:-0.02em; max-width:20ch; position:relative;}
+  .home-hero .sub{font-size:14.5px; color:rgba(234,240,248,0.78); margin-top:10px; max-width:56ch; position:relative;}
+  .home-stats{display:flex; gap:26px; margin-top:24px; position:relative; flex-wrap:wrap;}
+  .home-stat b{display:block; font-size:22px; font-weight:800; font-family:var(--font-mono);}
+  .home-stat span{font-size:11px; color:rgba(234,240,248,0.6); text-transform:uppercase; letter-spacing:.04em;}
+
+  .home-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:14px;}
+  .home-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 18px; box-shadow:var(--shadow); cursor:pointer; text-align:left;
+    font-family:var(--font-ui); display:flex; gap:14px; align-items:flex-start;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .home-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--gold);}
+  .home-card .hc-icon{
+    flex:none; width:38px; height:38px; border-radius:10px; background:var(--navy-soft); color:var(--navy-ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .home-card .hc-icon svg{width:19px; height:19px;}
+  .home-card h3{font-size:14.5px; font-weight:800; margin-bottom:4px;}
+  .home-card p{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+  .home-card .hc-num{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); font-weight:700;}
+
+  /* ---------- section intro ---------- */
+  .intro-box{
+    background:var(--surface-2); border:1px solid var(--border-soft); border-radius:var(--radius);
+    padding:14px 16px; font-size:13.5px; color:var(--ink-soft); margin-bottom:22px; line-height:1.55;
+  }
+  .role-tag{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700;
+    background:var(--plum-soft); color:var(--plum-ink); padding:3px 9px; border-radius:999px; margin-bottom:14px;
+  }
+  .role-tag svg{width:12px; height:12px;}
+
+  h3.sub-title{
+    font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint);
+    margin:32px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border-soft);
+    display:flex; align-items:center; gap:8px;
+  }
+  h3.sub-title .tag{font-family:var(--font-mono); background:var(--surface-3); color:var(--ink-soft); padding:2px 7px; border-radius:5px; font-size:10.5px;}
+  .view > h3.sub-title:first-of-type{margin-top:0;}
+
+  /* ---------- timeline / steps ---------- */
+  .timeline{position:relative; margin-left:15px; padding-left:29px; border-left:2px solid var(--border);}
+  .step{position:relative; padding-bottom:26px;}
+  .step:last-child{padding-bottom:4px;}
+  .step::before{
+    content:attr(data-n); position:absolute; left:-44px; top:0; width:29px; height:29px; border-radius:50%;
+    background:var(--surface); border:2px solid var(--navy); color:var(--navy-ink);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:800; font-size:12px;
+    box-shadow:0 0 0 4px var(--bg);
+  }
+  .step-title{font-size:14.5px; font-weight:800; margin-bottom:6px; letter-spacing:-0.005em;}
+  .step-body{font-size:13.5px; color:var(--ink-soft); line-height:1.65;}
+  .step-body p + p{margin-top:8px;}
+  .step-media{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+
+  .field-chip{
+    display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:12px; font-weight:600;
+    background:var(--navy-soft); color:var(--navy-ink); padding:2px 8px; border-radius:6px; white-space:nowrap;
+  }
+  .btn-shot{height:22px; width:auto; vertical-align:-6px; border-radius:4px; box-shadow:0 0 0 1px var(--border); margin:0 1px;}
+  .btn-shot.sq{height:20px;}
+
+  .shot-frame{
+    display:block; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden;
+    background:var(--surface-2); cursor:zoom-in; padding:0; max-width:100%; position:relative;
+    transition:box-shadow .12s ease, border-color .12s ease;
+  }
+  .shot-frame:hover{box-shadow:var(--shadow-lg); border-color:var(--gold);}
+  .shot-frame img{display:block; width:100%; max-width:520px; height:auto;}
+  .shot-frame.wide img{max-width:100%;}
+  .shot-frame .zoom-badge{
+    position:absolute; right:8px; bottom:8px; background:rgba(18,25,43,0.72); color:#fff;
+    width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+  .shot-frame .zoom-badge svg{width:13px; height:13px;}
+  .shot-cap{font-size:11.5px; color:var(--ink-faint); margin-top:6px; max-width:520px;}
+
+  /* ---------- callouts ---------- */
+  .callout{
+    display:flex; gap:11px; padding:13px 15px; border-radius:var(--radius); margin:14px 0; font-size:13.5px; line-height:1.55;
+  }
+  .callout svg{flex:none; width:18px; height:18px; margin-top:1px;}
+  .callout.note{background:var(--teal-soft); color:var(--teal-ink);}
+  .callout.warn{background:var(--gold-soft); color:var(--gold-ink);}
+  .callout.danger{background:var(--red-soft); color:var(--red-ink);}
+  .callout.danger b, .callout.warn b, .callout.note b{color:inherit;}
+  .callout .cal-title{font-weight:800; display:block; margin-bottom:3px;}
+
+  .auto-note{
+    display:flex; gap:9px; align-items:flex-start; margin-top:9px; padding:9px 12px;
+    border:1px dashed var(--border); border-radius:var(--radius-sm); background:var(--surface-2);
+    font-size:12px; color:var(--ink-faint); line-height:1.5;
+  }
+  .auto-note svg{flex:none; width:14px; height:14px; margin-top:2px; color:var(--ink-faint);}
+  .auto-note b{color:var(--ink-soft); font-weight:700;}
+
+  /* ---------- field table ---------- */
+  .field-table{width:100%; border-collapse:collapse; margin:6px 0 4px; font-size:13.5px;}
+  .field-table th{
+    text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint);
+    font-weight:700; padding:0 12px 8px 0; border-bottom:1px solid var(--border);
+  }
+  .field-table td{padding:11px 12px 11px 0; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+  .field-table tr:last-child td{border-bottom:none;}
+  .field-table td:first-child{white-space:nowrap; width:1%;}
+  .field-table .fval{color:var(--ink-soft);}
+  .badge-fill{
+    display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:5px; margin-left:7px;
+    text-transform:uppercase; letter-spacing:.03em; vertical-align:1px;
+  }
+  .badge-fill.auto{background:var(--teal-soft); color:var(--teal-ink);}
+  .badge-fill.manual{background:var(--gold-soft); color:var(--gold-ink);}
+  .badge-fill.required{background:var(--red-soft); color:var(--red-ink);}
+  .table-scroll{overflow-x:auto;}
+
+  /* ---------- yes/no question list ---------- */
+  .qa-list{display:flex; flex-direction:column; gap:10px; margin:6px 0;}
+  .qa-item{display:flex; gap:12px; padding:12px 14px; background:var(--surface-2); border:1px solid var(--border-soft); border-radius:var(--radius-sm);}
+  .qa-item .qa-yn{flex:none; font-family:var(--font-mono); font-size:10.5px; font-weight:800; color:var(--teal-ink); background:var(--teal-soft); border-radius:6px; padding:3px 7px; height:fit-content;}
+  .qa-item .qa-body b{font-size:13.5px; font-weight:700;}
+  .qa-item .qa-body p{font-size:12.5px; color:var(--ink-soft); margin-top:3px; line-height:1.5;}
+
+  /* ---------- branch toggle + status stepper (sec 3) ---------- */
+  .branch-toggle{display:inline-flex; padding:4px; background:var(--surface-3); border-radius:999px; margin-bottom:22px; gap:2px;}
+  .branch-btn{
+    border:none; background:none; padding:8px 18px; border-radius:999px; font-family:var(--font-ui);
+    font-size:13px; font-weight:700; color:var(--ink-soft); cursor:pointer; transition:.12s ease;
+  }
+  .branch-btn.is-active{background:var(--navy); color:#fff; box-shadow:var(--shadow);}
+  .branch-panel{display:none;}
+  .branch-panel.is-active{display:block;}
+
+  .stage-list{display:flex; flex-direction:column; gap:0;}
+  .stage{display:grid; grid-template-columns:32px 1fr; gap:14px; position:relative;}
+  .stage-rail{display:flex; flex-direction:column; align-items:center;}
+  .stage-dot{
+    width:30px; height:30px; border-radius:50%; background:var(--surface); border:2px solid var(--navy);
+    color:var(--navy-ink); display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:800; font-size:12px; flex:none; z-index:2;
+  }
+  .stage-line{width:2px; flex:1; background:var(--border); min-height:16px;}
+  .stage:last-child .stage-line{display:none;}
+  .stage-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:16px; box-shadow:var(--shadow);
+  }
+  .stage-pills{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:9px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-weight:700; font-size:12px;
+    padding:4px 10px; border-radius:7px; white-space:nowrap;
+  }
+  .pill-arrow{color:var(--ink-faint); font-size:13px;}
+  .pill.action-notreserve{background:var(--surface-3); color:var(--ink-soft);}
+  .pill.action-reserve{background:var(--teal-soft); color:var(--teal-ink);}
+  .pill.action-order{background:var(--plum-soft); color:var(--plum-ink);}
+  .pill.action-ship{background:var(--navy); color:#fff;}
+  .pill.status-pending{background:var(--gold-soft); color:var(--gold-ink);}
+  .pill.status-paid{background:var(--green-soft); color:var(--green-ink);}
+  .pill.status-storage{background:var(--red-soft); color:var(--red-ink);}
+  .pill.status-collect{background:var(--teal-soft); color:var(--teal-ink);}
+  .pill.status-progress{background:var(--plum-soft); color:var(--plum-ink);}
+  .pill.status-ready{background:var(--green-soft); color:var(--green-ink);}
+  .pill.status-done{background:var(--navy); color:#fff;}
+  .pill.status-transit{background:var(--gold-soft); color:var(--gold-ink);}
+  .who-tag{
+    display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:var(--ink-faint);
+    margin-left:auto;
+  }
+  .who-tag svg{width:13px; height:13px;}
+  .stage-desc{font-size:13.5px; color:var(--ink-soft); line-height:1.55;}
+  .stage-desc b{color:var(--ink); font-weight:700;}
+
+  /* ---------- payment scenario cards (sec 4) ---------- */
+  .pay-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .pay-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 19px; box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  .pay-card h4{font-size:14.5px; font-weight:800; margin-bottom:3px;}
+  .pay-card .pay-sub{font-size:11.5px; color:var(--ink-faint); margin-bottom:13px;}
+  .pay-steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .pay-steps li{display:flex; gap:9px; font-size:13px; color:var(--ink-soft); line-height:1.5;}
+  .pay-steps li .pn{
+    flex:none; width:18px; height:18px; border-radius:5px; background:var(--surface-3); color:var(--ink-soft);
+    font-family:var(--font-mono); font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+  .pay-foot{margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+  .status-transit-chip{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11.5px; font-weight:700;}
+  .status-transit-chip .pill{padding:3px 8px; font-size:11px;}
+  .real-chip{font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:999px; text-transform:uppercase; letter-spacing:.03em;}
+  .real-chip.yes{background:var(--green-soft); color:var(--green-ink);}
+  .real-chip.no{background:var(--red-soft); color:var(--red-ink);}
+
+  /* ---------- checklists (sec 5, 6) ---------- */
+  .chk-block{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 19px 16px; box-shadow:var(--shadow); margin-bottom:18px;}
+  .chk-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;}
+  .chk-head h4{font-size:14.5px; font-weight:800;}
+  .chk-stats{display:flex; align-items:center; gap:10px;}
+  .chk-count{font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--ink-soft); white-space:nowrap;}
+  .chk-ring{width:26px; height:26px; flex:none;}
+  .chk-reset{font-size:11.5px; color:var(--ink-faint); background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:2px; font-family:var(--font-ui); padding:0;}
+  .chk-reset:hover{color:var(--ink-soft);}
+  .chk{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px;}
+  .chk-item{border-radius:8px;}
+  .chk-item label{display:flex; align-items:flex-start; gap:11px; padding:8px 8px; cursor:pointer; border-radius:8px;}
+  .chk-item label:hover{background:var(--surface-2);}
+  .chk-item input{
+    flex:none; width:19px; height:19px; margin-top:1px; accent-color:var(--green); cursor:pointer;
+  }
+  .chk-item span{font-size:13.5px; color:var(--ink-soft); line-height:1.55;}
+  .chk-item input:checked + span{color:var(--ink-faint); text-decoration:line-through; text-decoration-color:var(--border);}
+
+  /* ---------- announcement banner (sec 6) ---------- */
+  .announce-banner{
+    background:linear-gradient(135deg, var(--gold-soft) 0%, var(--surface) 75%);
+    border:1px solid var(--gold); border-radius:var(--radius-lg); padding:20px 22px; margin-bottom:24px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .announce-banner svg{flex:none; width:22px; height:22px; color:var(--gold-ink); margin-top:2px;}
+  .announce-banner .ab-title{font-size:15px; font-weight:800; color:var(--gold-ink); margin-bottom:4px;}
+  .announce-banner .ab-body{font-size:13px; color:var(--ink-soft);}
+
+  /* ---------- misc ---------- */
+  .kv-note{font-size:13px; color:var(--ink-soft); line-height:1.65; margin-bottom:16px;}
+  .kv-note + .kv-note{margin-top:-8px;}
+  strong{color:var(--ink); font-weight:700;}
+
+  footer.site-foot{padding:26px 32px 48px; font-size:11.5px; color:var(--ink-faint); max-width:920px;}
+  footer.site-foot a{color:var(--ink-faint);}
+
+  /* ---------- lightbox ---------- */
+  .lightbox{
+    position:fixed; inset:0; background:rgba(10,14,22,0.86); display:none; align-items:center; justify-content:center;
+    z-index:200; padding:5vh 5vw; backdrop-filter:blur(3px);
+  }
+  .lightbox.is-open{display:flex;}
+  .lightbox img{max-width:100%; max-height:82vh; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.5); background:#fff;}
+  .lightbox .lb-cap{color:rgba(255,255,255,0.85); font-size:13px; text-align:center; margin-top:14px; max-width:70ch;}
+  .lightbox .lb-close{
+    position:absolute; top:22px; right:26px; width:40px; height:40px; border-radius:50%;
+    background:rgba(255,255,255,0.12); border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .lightbox .lb-close:hover{background:rgba(255,255,255,0.22);}
+  .lightbox .lb-close svg{width:18px; height:18px;}
+  .lightbox-figure{display:flex; flex-direction:column; align-items:center; max-width:min(900px,90vw);}
+
+  .flash{animation:flashhl 1.6s ease;}
+  @keyframes flashhl{0%{background:var(--gold-soft);} 100%{background:transparent;}}
+
+  /* ---------- mobile ---------- */
+  .backdrop{display:none;}
+  @media (max-width: 900px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{
+      position:fixed; left:0; top:0; width:min(300px,84vw); transform:translateX(-100%);
+      transition:transform .22s ease; box-shadow:var(--shadow-lg);
+    }
+    .sidebar.is-open{transform:translateX(0);}
+    .backdrop{display:none; position:fixed; inset:0; background:rgba(10,14,22,0.5); z-index:55;}
+    .backdrop.is-open{display:block;}
+    .mobile-bar{
+      display:flex; align-items:center; gap:12px; padding:12px 16px; position:sticky; top:0; z-index:45;
+      background:var(--navy); color:#fff;
+    }
+    .mobile-bar button{background:none; border:none; color:#fff; display:flex; padding:4px; cursor:pointer;}
+    .mobile-bar button svg{width:22px; height:22px;}
+    .mobile-bar .mb-title{font-size:13.5px; font-weight:800;}
+    .topbar{padding:12px 16px; flex-wrap:wrap;}
+    .topbar-title{display:none;}
+    .breadcrumb-mobile{
+      display:flex !important; align-items:center; flex-wrap:wrap; gap:0; font-size:11px; color:var(--ink-faint);
+      padding:8px 16px 0; background:var(--bg);
+    }
+    .breadcrumb-mobile a{color:var(--ink-faint); text-decoration:none;}
+    .breadcrumb-mobile .crumb-sep{margin:0 4px; color:var(--border);}
+    .breadcrumb-mobile .crumb-cur{color:var(--ink-soft);}
+    .search-wrap{width:100%; margin-left:0;}
+    main{padding:20px 16px 60px;}
+    .home-grid{grid-template-columns:1fr;}
+    .pay-grid{grid-template-columns:1fr;}
+    .home-hero{padding:26px 20px;}
+    .home-hero h1{font-size:24px;}
+    .stage{grid-template-columns:26px 1fr; gap:10px;}
+    .stage-dot{width:26px; height:26px; font-size:11px;}
+    footer.site-foot{padding:20px 16px 40px;}
+  }
+
+  /* ---------- global kb tree nav (added) ---------- */
+  .nav-cat-label{font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:rgba(234,240,248,0.35); padding:14px 10px 5px;}
+  .nav-cat-label:first-child{padding-top:2px;}
+  .nav-item.is-doc{margin-bottom:1px;}
+  .nav-item.is-doc.is-current{background:rgba(255,255,255,0.06); color:#fff; cursor:default;}
+  .nav-item.is-doc.is-soon{opacity:.42; cursor:default;}
+  .nav-item.is-doc.is-soon:hover{background:none; color:rgba(234,240,248,0.82);}
+  a.nav-item.is-doc{text-decoration:none;}
+  .nav-cat-label{cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none;}
+  .nav-cat-label:hover{color:rgba(234,240,248,0.6);}
+  .nav-cat-label svg{opacity:.5; transition:transform .15s ease; flex:none;}
+  .nav-cat-label.is-open svg{transform:rotate(90deg);}
+  .nav-cat-group{overflow:hidden; max-height:0; transition:max-height .18s ease;}
+  .nav-cat-group:not(.is-collapsed){max-height:none;}
+  .nav-folder-label{
+    cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none;
+    padding:7px 12px 7px 24px; font-size:11.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+    color:rgba(234,240,248,0.45);
+  }
+  .nav-folder-label:hover{color:rgba(234,240,248,0.7);}
+  .nav-folder-label svg{opacity:.5; transition:transform .15s ease; flex:none;}
+  .nav-folder-label.is-open svg{transform:rotate(90deg);}
+  .nav-folder-group{overflow:hidden; max-height:0; transition:max-height .18s ease; padding-left:12px;}
+  .nav-folder-group:not(.is-collapsed){max-height:none;}
+
+  /* ---------- breadcrumb (added) ---------- */
+  .breadcrumb{font-size:11.5px; color:var(--ink-faint); margin-bottom:3px; display:flex; align-items:center; flex-wrap:wrap;}
+  .breadcrumb a{color:var(--ink-faint); text-decoration:none;}
+  .breadcrumb a:hover{color:var(--navy-ink); text-decoration:underline;}
+  .breadcrumb .crumb-sep{margin:0 5px; color:var(--border);}
+  .breadcrumb .crumb-cur{color:var(--ink-soft);}
+  .breadcrumb-mobile{display:none;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 4.5C4 3.7 4.7 3 5.5 3H12v18H5.5c-.8 0-1.5-.7-1.5-1.5v-15Z"/>
+  <path d="M20 4.5c0-.8-.7-1.5-1.5-1.5H12v18h6.5c.8 0 1.5-.7 1.5-1.5v-15Z"/>
+</symbol>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="4 11 12 4 20 11"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9"/><rect x="10" y="14" width="4" height="6"/>
+</symbol>
+<symbol id="i-userplus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="8" r="3.4"/><path d="M2.5 20.5c0-3.7 2.9-6.3 6.5-6.3s6.5 2.6 6.5 6.3"/><line x1="18.5" y1="7.5" x2="18.5" y2="13.5"/><line x1="15.5" y1="10.5" x2="21.5" y2="10.5"/>
+</symbol>
+<symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M7.5 3.5h6l4 4v11.5a1.5 1.5 0 0 1-1.5 1.5h-8.5A1.5 1.5 0 0 1 6 18.5v-13.5A1.5 1.5 0 0 1 7.5 3.5Z"/><path d="M13.5 3.5v4h4"/><line x1="9" y1="12.2" x2="15" y2="12.2"/><line x1="9" y1="15.6" x2="13" y2="15.6"/>
+</symbol>
+<symbol id="i-flow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="5" cy="6" r="2.3"/><circle cx="5" cy="18" r="2.3"/><circle cx="19" cy="12" r="2.3"/>
+  <path d="M7.3 6h4.7a4 4 0 0 1 4 4"/><path d="M7.3 18h4.7a4 4 0 0 0 4-4"/>
+</symbol>
+<symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="5.5" width="18" height="13" rx="1.8"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="6.5" y1="14.5" x2="11" y2="14.5"/>
+</symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="4" y="4" width="16" height="16" rx="3.5"/><polyline points="8.5 12.2 11 14.7 16 9.5"/>
+</symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3.5" y="5.5" width="17" height="15" rx="2"/><line x1="3.5" y1="10" x2="20.5" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/>
+</symbol>
+<symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3.5 20.5 8 12 12.5 3.5 8Z"/><path d="M3.5 8v9L12 21.5"/><path d="M20.5 8v9L12 21.5"/><line x1="12" y1="12.5" x2="12" y2="21.5"/>
+</symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/>
+</symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/>
+</symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+</symbol>
+<symbol id="i-zoom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="4 9 4 4 9 4"/><polyline points="15 4 20 4 20 9"/><polyline points="20 15 20 20 15 20"/><polyline points="9 20 4 20 4 15"/>
+</symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="8.5"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.7" r="0.9" fill="currentColor" stroke="none"/>
+</symbol>
+<symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3.5 21.5 20h-19L12 3.5Z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none"/>
+</symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.4M12 18.1v2.4M20.5 12h-2.4M5.9 12H3.5M17.7 6.3l-1.7 1.7M8 16l-1.7 1.7M17.7 17.7 16 16M8 8 6.3 6.3"/>
+</symbol>
+<symbol id="i-manager" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="8" r="3.3"/><path d="M5 20.5c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/>
+</symbol>
+<symbol id="i-worker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 9.5 12 5l8 4.5"/><circle cx="12" cy="9.7" r="1.5" fill="currentColor" stroke="none"/><path d="M6 11v6.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V11"/>
+</symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="9 6 15 12 9 18"/>
+</symbol>
+<symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9.5 14.5 14.5 9.5"/><path d="M11 7l1-1a3.5 3.5 0 0 1 5 5l-1 1"/><path d="M13 17l-1 1a3.5 3.5 0 0 1-5-5l1-1"/>
+</symbol>
+</svg>
+
+<div class="app">
+  <div class="backdrop" id="backdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg><use href="#i-book"/></svg>
+        <div>
+          <div class="brand-name">НоваяПлитка.рф</div>
+          <div class="brand-sub">ООО «СибирьКомплект»</div>
+        </div>
+      </div>
+      <a class="brand-title" href="Хаб.html" style="text-decoration:none; display:block;">← Вся база знаний</a>
+      <div class="brand-title" style="font-size:12.5px; margin-top:2px;">Отработка возражений</div>
+      <div class="brand-date"><svg width="12" height="12"><use href="#i-calendar"/></svg> дополнение к скрипту продаж</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+
+  <div class="content">
+    <div class="mobile-bar">
+      <button id="menuBtn" aria-label="Открыть меню"><svg><use href="#i-menu"/></svg></button>
+      <div class="mb-title" id="mbTitle">Обзор</div>
+    </div>
+    <div class="breadcrumb-mobile" id="breadcrumbMobile"></div>
+    <div class="topbar">
+      <div class="topbar-title">
+        <div class="breadcrumb" id="breadcrumb"></div>
+        <h1 id="topTitle">Обзор</h1>
+        <p id="topDesc">Главная страница раздела</p>
+      </div>
+      <div class="search-wrap">
+        <svg><use href="#i-search"/></svg>
+        <input id="search" type="text" placeholder="Поиск по всей базе знаний…" autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+
+    <main id="main">
+
+      <!-- ============ HOME ============ -->
+      <section class="view is-active" id="home" data-title="Обзор" data-desc="Главная страница раздела">
+        <div class="home-hero">
+          <h1>Отработка возражений</h1>
+          <p class="sub">Дополнение к скрипту продаж — стеновые панели, гибкий мрамор и декоративные рейки.</p>
+          <div class="home-stats">
+            <div class="home-stat"><b class="tabular">8</b><span>Категорий возражений</span></div>
+            <div class="home-stat"><b class="tabular">20+</b><span>Готовых ответов</span></div>
+            <div class="home-stat"><b class="tabular">3 шага</b><span>Формула ответа</span></div>
+          </div>
+        </div>
+
+        <div class="intro-box">Универсальная формула обработки возражения: <b>согласие → аргумент → вопрос</b>. Сначала соглашаемся с частью возражения (не спорим и не оправдываемся), затем даём аргумент по существу, и завершаем вопросом, который двигает разговор дальше. Под каждым возражением указано «что за этим стоит» — реальная причина сомнения клиента. Отвечать нужно на неё, а не только на буквальный текст вопроса.</div>
+
+        <h3 class="sub-title">Категории возражений</h3>
+        <div class="home-grid" id="homeGrid"></div>
+      </section>
+
+      <!-- ============ SEC 1 ============ -->
+      <section class="view" id="sec1" data-title="Возражения по цене" data-desc="«Дорого», «у конкурентов дешевле», «можно скидку?»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 1</div>
+          <h2>Возражения по цене</h2>
+        </div>
+
+        <h3 class="sub-title">«Дорого»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент либо сравнивает с более дешёвым материалом (плитка, обои, краска), либо ещё не понял, из чего складывается наша цена.</div>
+        </div>
+        <p class="searchable">— Соглашусь, это не самая низкая цена на рынке отделочных материалов в принципе. Но конкретно среди прямых поставщиков гибкого мрамора и бамбуковых панелей мы одни из самых выгодных — работаем без посредников, напрямую от завода, поэтому цена уже на 15–20% ниже, чем у компаний, покупающих через перекупщиков. А если посчитать не только материал, а весь проект — с учётом монтажа, который у наших панелей в разы проще и дешевле, чем у керамогранита или шпона, — итоговая стоимость получается выгоднее. Что для вас сейчас важнее: цена за квадратный метр материала или итоговая стоимость всего проекта под ключ?</p>
+
+        <h3 class="sub-title">«У конкурентов дешевле»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент действительно нашёл более низкую цену, либо блефует, чтобы получить скидку.</div>
+        </div>
+        <p class="searchable">— Соглашусь, что цена на рынке разная — материалы отличаются и по толщине, и по составу, и по тому, напрямую вы покупаете у импортёра или через посредника. Подскажите, вы сравнивали именно с гибким мрамором и бамбуком такой же толщины и той же коллекции, или это похожий, но другой материал? Часто более низкая цена — это либо более тонкий и хрупкий материал, либо перекупщик, который сам берёт у нас или у другого прямого поставщика с наценкой.</p>
+
+        <h3 class="sub-title">«Можно скидку?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>стандартный вопрос почти любого клиента, не всегда означает реальный уход к конкуренту.</div>
+        </div>
+        <p class="searchable">— На розничные заказы у нас сейчас фиксированная цена без скидок — это позволяет держать её стабильно ниже рынка для всех клиентов. А если вы дизайнер, подрядная организация или закупаете большой объём — по таким заказам у нас есть отдельные оптовые условия, давайте посчитаем вашу площадь и я уточню, что можно предложить.</p>
+
+        <div class="callout warn">
+          <svg><use href="#i-warn"/></svg>
+          <div><span class="cal-title">Для розничных клиентов скидок нет</span>Это официальная позиция компании — не стоит обещать скидку «под настроение», чтобы не создавать неравные условия для других клиентов.</div>
+        </div>
+      </section>
+
+      <!-- ============ SEC 2 ============ -->
+      <section class="view" id="sec2" data-title="Сроки и наличие" data-desc="«Долго ждать», «а если нужного нет в наличии?»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 2</div>
+          <h2>Возражения по срокам и наличию</h2>
+        </div>
+
+        <h3 class="sub-title">«Сроки»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент уже сталкивался с долгим ожиданием у других поставщиков и не хочет повторения.</div>
+        </div>
+        <p class="searchable">— Если мы сейчас договоримся по срокам, вы готовы будете с нами работать? Как раз по срокам мы один из самых быстрых вариантов на рынке — 95% материала в наличии на собственном складе, отгружаем в течение 24 часов, потому что работаем напрямую с заводом и не зависим от чужих поставок.</p>
+
+        <h3 class="sub-title">«А если нужного нет в наличии именно сейчас?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент переживает, что придётся долго ждать именно свою позицию (редкий цвет/коллекцию).</div>
+        </div>
+        <p class="searchable">— Уточню остаток по конкретной позиции прямо сейчас. Если нужного тиража не окажется на складе — сориентирую по срокам довоза, обычно это не отменяет сделку, а просто немного сдвигает дату монтажа.</p>
+
+      </section>
+
+      <!-- ============ SEC 3 ============ -->
+      <section class="view" id="sec3" data-title="Доверие к материалу" data-desc="«Это подделка?», «не выцветет?», «не токсично?»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 3</div>
+          <h2>Возражения по доверию к материалу</h2>
+        </div>
+
+        <h3 class="sub-title">«Это же не настоящий мрамор/дерево, а подделка»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиента смущает слово «гибкий» — кажется, что это дешёвая имитация, а не полноценный материал.</div>
+        </div>
+        <p class="searchable">— Соглашусь, звучит непривычно — но это не имитация «под мрамор» из пластика, а панель на основе настоящей мраморной муки и ПВХ, поэтому она сохраняет фактуру и рисунок камня, но при этом гнётся, не бьётся при перевозке и весит в разы меньше слэба. Бамбуковые панели точно так же состоят из бамбукового волокна и полимеров, а не просто окрашены под дерево. Хотите, покажу текстуру вживую в шоу-руме или пришлю фото крупным планом?</p>
+
+        <h3 class="sub-title">«Не выцветет и не расслоится со временем?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент беспокоится о долговечности, особенно если делает ремонт «на года».</div>
+        </div>
+        <p class="searchable">— Материал предназначен именно для внутренней отделки — при использовании внутри помещения, без прямого длительного контакта с уличным солнцем и осадками, он держит цвет и структуру. Единственное ограничение — материал нельзя использовать на улице и на полу, а вот в лоджии или на крытом балконе — можно.</p>
+
+        <h3 class="sub-title">«Не токсично, не будет пахнуть?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>вопрос об экологичности и безопасности для здоровья, особенно если в доме дети.</div>
+        </div>
+        <p class="searchable">— Материал предназначен для жилых и коммерческих помещений и применяется в том числе в детских и медицинских объектах вроде стоматологий, так что вопрос безопасности для внутренней отделки закрыт. Если нужны точные документы/сертификаты под конкретный объект — передам ваш вопрос менеджеру, который вышлет актуальные документы.</p>
+
+        <h3 class="sub-title">«Насколько прочно — не поцарапается, не сломается?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент примеряет материал на моющиеся/часто контактные поверхности или коммерческий трафик.</div>
+        </div>
+        <p class="searchable">— Бамбуковые панели у нас сертифицированы по классу горючести Г1 — это трудногорючий, слабогорючий материал, что также говорит о плотности и качестве структуры. Оба материала — и мрамор, и бамбук — полностью влагостойкие, подходят для мокрых зон вроде ванной или кухонного фартука. Для интенсивной коммерческой нагрузки (например, проходной коридор) подскажу конкретную коллекцию с более плотной фактурой.</p>
+
+      </section>
+
+      <!-- ============ SEC 4 ============ -->
+      <section class="view" id="sec4" data-title="Монтаж" data-desc="«Дорого ли монтаж?», «а сам смогу положить?»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 4</div>
+          <h2>Возражения по монтажу</h2>
+        </div>
+
+        <h3 class="sub-title">«Дорого ли будет монтаж?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент закладывает в бюджет не только материал, но и работу — и боится, что общая сумма «утроится».</div>
+        </div>
+        <p class="searchable">— Как раз здесь наше преимущество: монтаж наших панелей значительно проще и дешевле, чем монтаж керамогранита или шпона — не нужна мокрая штукатурка и долгая подготовка стен. Точную стоимость монтажа под вашу площадь и город лучше уточнить у менеджера, я передам ваш запрос.</p>
+
+        <h3 class="sub-title">«А сам смогу положить?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент хочет сэкономить на бригаде или просто не доверяет незнакомым монтажникам.</div>
+        </div>
+        <p class="searchable">— Материал режется обычным канцелярским ножом и монтируется на специальный клей на каучуковой основе — сам процесс несложный, многие клиенты делают монтаж самостоятельно. Если нужно — подскажем нюансы по стыковке и обходу углов, а если хотите гарантированный результат — можем порекомендовать проверенных монтажников.</p>
+
+      </section>
+
+      <!-- ============ SEC 5 ============ -->
+      <section class="view" id="sec5" data-title="Отсрочки решения" data-desc="«Я подумаю», «нужно посоветоваться», «пока рано»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 5</div>
+          <h2>Возражения-отсрочки решения</h2>
+        </div>
+
+        <h3 class="sub-title">«Я подумаю»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>либо реальная потребность подумать, либо вежливый отказ, за которым прячется невысказанное возражение (чаще всего цена или сомнение в материале).</div>
+        </div>
+        <p class="searchable">— Скажите, пожалуйста, только честно — вас что-то конкретное не устроило? Может, дело в цене, в сроках или хотелось бы посмотреть материал вживую? Так я смогу сразу закрыть именно этот вопрос.</p>
+
+        <h3 class="sub-title">«Нужно посоветоваться (с супругом/партнёром/дизайнером)»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент не единственный, кто принимает решение, либо использует это как мягкий способ не отвечать сразу.</div>
+        </div>
+        <p class="searchable">— Конечно, это важное решение. Чтобы разговор с ними был предметным, могу сразу подготовить расчёт с фото материала и итоговой суммой — так вам будет проще всё обсудить и не пересказывать детали по памяти. Когда ориентировочно сможете обсудить, чтобы я на связи был в это время?</p>
+
+        <h3 class="sub-title">«Пока рано, только присматриваемся»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент действительно в начале пути — сделка не горит, но и терять его нельзя (категория «В» в Регламенте квалификации клиентов).</div>
+        </div>
+        <p class="searchable">— Отлично, что заранее начали — на этом этапе многие клиенты просто прикидывают бюджет с доставкой или пробуют разные варианты дизайна. Могу сразу прислать расчёт стоимости с доставкой — заодно и бюджет на ремонт станет понятнее. Как вам такой вариант?</p>
+
+      </section>
+
+      <!-- ============ SEC 6 ============ -->
+      <section class="view" id="sec6" data-title="Логистика и шоу-румы" data-desc="«Нет шоу-рума», «слишком дорогая доставка»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 6</div>
+          <h2>Возражения по логистике и шоу-румам</h2>
+        </div>
+
+        <h3 class="sub-title">«В моём городе нет шоу-рума — как посмотреть вживую?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент не готов покупать материал «вслепую», особенно когда важен точный цвет и фактура.</div>
+        </div>
+        <p class="searchable">— Понимаю, вживую материал смотрится совсем иначе, чем на фото. Ближайший шоу-рум — [уточнить город из списка] — если будет возможность подъехать, покажем все образцы. Если нет — можем отправить фото и видео конкретных позиций при дневном свете, это тоже неплохо передаёт фактуру.</p>
+
+        <h3 class="sub-title">«Слишком дорогая доставка»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент сравнивает полную стоимость с материалом «внутри города» и не закладывал доставку в бюджет.</div>
+        </div>
+        <p class="searchable">— Доставка считается по фактическому весу и расстоянию — панели у нас довольно лёгкие (13–18 кг на лист), поэтому доставка обычно выходит дешевле, чем для тяжёлых материалов вроде керамогранита. Давайте я попрошу менеджера прислать точный расчёт по вашему адресу, чтобы сравнить предметно.</p>
+
+      </section>
+
+      <!-- ============ SEC 7 ============ -->
+      <section class="view" id="sec7" data-title="Конкурентные" data-desc="«Уже работаем с другим поставщиком»">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 7</div>
+          <h2>Конкурентные возражения</h2>
+        </div>
+
+        <h3 class="sub-title">«Уже работаем с другим поставщиком»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент доволен текущим поставщиком либо просто отказывается по инерции.</div>
+        </div>
+        <p class="searchable">— Понимаю, и это правильно — работать с проверенным поставщиком. Оставлю вам наши контакты и каталог на будущее — если когда-то понадобится сравнить цену, ассортимент или сроки поставки, будем рады показать, чем можем быть полезны.</p>
+
+        <h3 class="sub-title">«Купил дешевле в другом месте, а теперь сомневаюсь»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>клиент уже принял решение в пользу конкурента и просто хочет свериться, не ошибся ли.</div>
+        </div>
+        <p class="searchable">— Расскажите, что именно смущает — материал, сроки или итоговая цена с доставкой и монтажом? Если пришлёте параметры (толщина, состав, размер листа), сравню с нашим аналогом и честно скажу, где разница действительно существенная, а где нет.</p>
+
+      </section>
+
+      <!-- ============ SEC 8 ============ -->
+      <section class="view" id="sec8" data-title="B2B-клиенты" data-desc="Отсрочка платежа, скидка за объём, эксклюзив на регион">
+        <div class="view-head">
+          <div class="eyebrow">Раздел 8</div>
+          <h2>Возражения B2B-клиентов</h2>
+        </div>
+
+        <h3 class="sub-title">«Даёте отсрочку платежа?»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>вопрос об условиях работы для подрядных/торгующих организаций, влияет на их кассовый разрыв.</div>
+        </div>
+        <p class="searchable">— Вопрос условий оплаты для партнёров решается индивидуально в зависимости от объёма и истории сотрудничества — передам его менеджеру вместе с деталями вашего заказа, чтобы обсудить конкретные условия.</p>
+
+        <h3 class="sub-title">«Нужна скидка за объём»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>B2B-клиент ожидает оптовую цену, а не розничную — это обоснованное ожидание, а не попытка поторговаться.</div>
+        </div>
+        <p class="searchable">— Для партнёров у нас как раз есть оптовые цены — пришлите, пожалуйста, площадь объекта, и я подготовлю расчёт по оптовым условиям, а не по рознице.</p>
+
+        <h3 class="sub-title">«Хотим эксклюзив на регион/город»</h3>
+        <div class="callout note">
+          <svg><use href="#i-info"/></svg>
+          <div><span class="cal-title">Что за этим стоит</span>подрядная или торгующая организация хочет защититься от прямой конкуренции с другими дилерами того же бренда.</div>
+        </div>
+        <p class="searchable">— Хороший вопрос, но это уже решение на уровне руководства компании, а не то, что я могу подтвердить сам. Передам ваш запрос — уточню, на каких условиях такое возможно обсудить.</p>
+
+      </section>
+
+
+    </main>
+  </div>
+</div>
+
+<script src="kb-structure.js"></script>
+<script src="search-index.js"></script>
+<script src="kb-nav-search.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var CURRENT_DOC_URL = "Отработка возражений.html";
+
+  var SECTIONS = [
+    {id:'home', num:'', title:'Обзор', icon:'i-home'},
+    {id:'sec1', num:'1', title:'Возражения по цене', icon:'i-card'},
+    {id:'sec2', num:'2', title:'Сроки и наличие', icon:'i-calendar'},
+    {id:'sec3', num:'3', title:'Доверие к материалу', icon:'i-check'},
+    {id:'sec4', num:'4', title:'Монтаж', icon:'i-gear'},
+    {id:'sec5', num:'5', title:'Отсрочки решения', icon:'i-warn'},
+    {id:'sec6', num:'6', title:'Логистика и шоу-румы', icon:'i-link'},
+    {id:'sec7', num:'7', title:'Конкурентные', icon:'i-flow'},
+    {id:'sec8', num:'8', title:'B2B-клиенты', icon:'i-manager'}
+  ];
+
+  var HOME_CARDS = [
+    {target:'sec1', num:'01', icon:'i-card', title:'Возражения по цене', desc:'«Дорого», «у конкурентов дешевле», «можно скидку?».'},
+    {target:'sec2', num:'02', icon:'i-calendar', title:'Сроки и наличие', desc:'«Долго ждать», «а если нужного нет в наличии?».'},
+    {target:'sec3', num:'03', icon:'i-check', title:'Доверие к материалу', desc:'«Это подделка?», «не выцветет?», «не токсично?».'},
+    {target:'sec4', num:'04', icon:'i-gear', title:'Монтаж', desc:'«Дорого ли монтаж?», «а сам смогу положить?».'},
+    {target:'sec5', num:'05', icon:'i-warn', title:'Отсрочки решения', desc:'«Я подумаю», «нужно посоветоваться», «пока рано».'},
+    {target:'sec6', num:'06', icon:'i-link', title:'Логистика и шоу-румы', desc:'«Нет шоу-рума», «слишком дорогая доставка».'},
+    {target:'sec7', num:'07', icon:'i-flow', title:'Конкурентные', desc:'«Уже работаем с другим поставщиком».'},
+    {target:'sec8', num:'08', icon:'i-manager', title:'B2B-клиенты', desc:'Отсрочка платежа, скидка за объём, эксклюзив на регион.'}
+  ];
+
+  var homeGrid = document.getElementById('homeGrid');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('backdrop');
+  function openSidebar(){ sidebar.classList.add('is-open'); backdrop.classList.add('is-open'); }
+  function closeSidebar(){ sidebar.classList.remove('is-open'); backdrop.classList.remove('is-open'); }
+  document.getElementById('menuBtn').addEventListener('click', openSidebar);
+  backdrop.addEventListener('click', closeSidebar);
+
+  function svgUse(id, w, h){ return '<svg width="'+(w||16)+'" height="'+(h||16)+'"><use href="#'+id+'"/></svg>'; }
+
+  HOME_CARDS.forEach(function(c){
+    var card = document.createElement('button');
+    card.className = 'home-card';
+    card.innerHTML = '<span class="hc-icon">'+svgUse(c.icon,19,19)+'</span>'+
+      '<span><span class="hc-num">'+c.num+'</span><h3>'+c.title+'</h3><p>'+c.desc+'</p></span>';
+    card.addEventListener('click', function(){ goTo(c.target); });
+    homeGrid.appendChild(card);
+  });
+
+  function goTo(sectionId){
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('is-active'); });
+    var target = document.getElementById(sectionId);
+    if(!target) return;
+    target.classList.add('is-active');
+    KB.markActiveNavItem(sectionId);
+    document.getElementById('topTitle').textContent = target.getAttribute('data-title') || '';
+    document.getElementById('topDesc').textContent = target.getAttribute('data-desc') || '';
+    KB.renderBreadcrumb(CURRENT_DOC_URL, target.getAttribute('data-title') || '');
+    document.getElementById('mbTitle').textContent = target.getAttribute('data-title') || '';
+    document.getElementById('main').scrollTop = 0;
+    window.scrollTo(0,0);
+    try{ history.replaceState(null,'', '#'+sectionId); }catch(e){}
+    closeSidebar();
+  }
+  window.goTo = goTo;
+
+  KB.renderNav(document.getElementById('nav'), CURRENT_DOC_URL, SECTIONS, goTo);
+
+  (function initRoute(){
+    var hash = (location.hash||'').replace('#','');
+    var found = null;
+    SECTIONS.forEach(function(s){ if(s.id===hash) found=s.id; });
+    goTo(found || 'home');
+  })();
+
+  KB.initSearch(document.getElementById('search'), document.getElementById('searchResults'), CURRENT_DOC_URL, goTo);
+  KB.handleIncomingSearch(goTo);
+
+})();
+</script>
+</body>
+</html>
